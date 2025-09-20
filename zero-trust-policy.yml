@@ -1,0 +1,16 @@
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: zero-trust-policy
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  process:
+    matchPaths:
+    - path: /usr/bin/myapp
+      action: Allow
+  network:
+    matchProtocols:
+    - protocol: tcp
+      action: Block
