@@ -1,0 +1,21 @@
+#https://docs.kubearmor.io/kubearmor/quick-links/deployment_guide
+
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: zero-trust-nginx-allow-only-nginx
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx  
+  process:
+    matchPaths:
+    - path: /usr/sbin/nginx  
+    - path: /bin/bash  
+  file:
+    matchDirectories:
+    - dir: /
+      recursive: true  
+  action:
+    Allow  
