@@ -1,5 +1,4 @@
 #https://docs.kubearmor.io/kubearmor/quick-links/deployment_guide
-
 apiVersion: security.kubearmor.com/v1
 kind: KubeArmorPolicy
 metadata:
