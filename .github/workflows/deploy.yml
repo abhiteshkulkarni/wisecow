@@ -6,24 +6,36 @@ on:
       - main
 
 jobs:
-
-  build:
-
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-
+    # Checkout the repo
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Login DockerHub
+    # Login to Docker Hub
+    - name: Login to Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        password: ${{ secrets.DOCKER_PASSWORD }}  # Should be a Docker Hub Personal Access Token
 
+    # Build the Docker image with cache
     - name: Build Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wisecow:latest .
+      run: |
+        docker build \
+          --cache-from ${{ secrets.DOCKER_USERNAME }}/wisecow:latest \
+          -t ${{ secrets.DOCKER_USERNAME }}/wisecow:latest .
 
-    - name: Push Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/wisecow:latest
+    # Tag image with version number
+    - name: Tag Docker Image with version
+      run: |
+        docker tag ${{ secrets.DOCKER_USERNAME }}/wisecow:latest \
+                   ${{ secrets.DOCKER_USERNAME }}/wisecow:${{ github.run_number }}
+
+    # Push both tags to Docker Hub
+    - name: Push Docker Images
+      run: |
+        docker push ${{ secrets.DOCKER_USERNAME }}/wisecow:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/wisecow:${{ github.run_number }}
